@@ -15,6 +15,6 @@
       "domain": "env var DOMAIN",
       "autoRenewToken": true
     },
-    "qna_subscription": ""
+    "qna_subscription": "env var QNA_SUBSCRIPTION"
   }
 }

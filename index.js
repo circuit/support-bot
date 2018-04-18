@@ -23,6 +23,8 @@ const logger = Circuit.logger;
 config.circuit.client_id = process.env.CLIENT_ID || config.circuit.client_id;
 config.circuit.client_secret = process.env.CLIENT_SECRET || config.circuit.client_secret;
 config.circuit.domain = process.env.DOMAIN || config.circuit.domain;
+config.qna_subscription = process.env.QNA_SUBSCRIPTION || config.qna_subscription;
+console.log(config)
 client = new Circuit.Client(config.circuit);
 
 async function run() {
