@@ -56,6 +56,10 @@ async function logon() {
   client.addEventListener('itemAdded', processItem);
 }
 
+function postProcessing(content) {
+  content = content.replace(/(<\s*\/?\s*)strong(\s*([^>]*)?\s*>)/gi ,'$b$2'); // switch samp to span
+  return content;
+}
 
 /**
  * Process Conversation Item
@@ -79,6 +83,8 @@ async function processItem(evt) {
       default:
         logger.debug(`[APP]: Unhandled item type: ${item.type}`);
     }
+
+    responseText= postProcessing(responseText);
 
     if (responseText) {
       await client.addTextItem(item.convId, {

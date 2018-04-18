@@ -81,6 +81,7 @@ function convert(html) {
   content = content.replace(/(<\s*\/?\s*)section(\s*([^>]*)?\s*>)/gi ,'$1div$2'); // switch section to div
   content = content.replace(/(<\s*\/?\s*)abbr(\s*([^>]*)?\s*>)/gi ,'$1span$2'); // switch abbr to span
   content = content.replace(/(<\s*\/?\s*)samp(\s*([^>]*)?\s*>)/gi ,'$1span$2'); // switch samp to span
+  content = content.replace(/(<\s*\/?\s*)strong(\s*([^>]*)?\s*>)/gi ,'$b$2'); // switch samp to span
   content = content.replace(/  +/g, ' ');  // remove multiple spaces
   content = content.replace(/(\r\n\t|\n|\r\t)/gm, ' '); // replace newlines with a space
   content = content.replace(/\> +/g, ">"); // remove spaces after closing tag
