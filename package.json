@@ -17,9 +17,7 @@
     "html-entities": "^1.2.1",
     "html-to-text": "^4.0.0",
     "request": "^2.85.0",
-    "util": "^0.10.3"
-  },
-  "devDependencies": {
+    "util": "^0.10.3",
     "cross-env": "^5.1.4",
     "jsdom": "^11.8.0",
     "json2xls": "^0.1.2"
