@@ -6,7 +6,9 @@
       "domain": "circuitsandbox.net",
       "autoRenewToken": true
     },
-    "qna_subscription": "see override"
+    "qna_subscription": "see override",
+    "sdkLogLevel": "debug",
+    "appLogLevel": "debug"
   },
   "production": {
     "circuit": {
@@ -15,6 +17,8 @@
       "domain": "env var DOMAIN",
       "autoRenewToken": true
     },
-    "qna_subscription": "env var QNA_SUBSCRIPTION"
+    "qna_subscription": "env var QNA_SUBSCRIPTION",
+    "sdkLogLevel": "debug",
+    "appLogLevel": "debug"
   }
 }
