@@ -160,5 +160,11 @@ function processTextItem(item) {
 }
 
 run()
-  .then(() => logger.info('[APP]: Started sucessfully'))
-  .catch(err => logger.error('[APP]:', err));
+  .then(() => {
+    console.log('[APP]: Started sucessfully')
+    logger.info('[APP]: Started sucessfully')
+  })
+  .catch(err => {
+    console.error(['APP]:', err)
+    logger.error('[APP]:', err)
+  });
