@@ -2,9 +2,9 @@
   "name": "circuit-faq-bot",
   "version": "1.0.0",
   "description": "",
-  "main": "app.js",
+  "main": "server.js",
   "scripts": {
-    "start": "node app.js",
+    "start": "node server.js",
     "dev": "node server.js"
   },
   "keywords": [],
