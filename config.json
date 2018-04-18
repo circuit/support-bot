@@ -10,9 +10,9 @@
   },
   "production": {
     "circuit": {
-      "client_id": "???",
-      "client_secret": "",
-      "domain": "eu.yourcircuit.com",
+      "client_id": "env var CLIENT_ID",
+      "client_secret": "env var CLIENT_SECRET",
+      "domain": "env var DOMAIN",
       "autoRenewToken": true
     },
     "qna_subscription": ""

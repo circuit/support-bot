@@ -21,6 +21,7 @@ let client;
 const logger = Circuit.logger;
 
 config.circuit.client_secret = process.env.CLIENT_SECRET || config.circuit.client_secret;
+config.circuit.domain = process.env.DOMAIN || config.circuit.domain;
 client = new Circuit.Client(config.circuit);
 
 async function run() {
