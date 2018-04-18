@@ -57,7 +57,9 @@ async function logon() {
 }
 
 function postProcessing(content) {
-  content = content.replace(/(<\s*\/?\s*)strong(\s*([^>]*)?\s*>)/gi ,'$b$2'); // switch samp to span
+  content = content.replace(/(<\s*\/?\s*)strong(\s*([^>]*)?\s*>)/gi ,'$b$2'); // switch strong to b
+  content = content.replace(/><\//g, ">&nbsp;</"); // more empty tags
+
   return content;
 }
 
