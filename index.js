@@ -16,6 +16,7 @@ const converter = require('./converter');
 
 // Local variables
 let client;
+const conversations = {};
 
 //Circuit.setLogger(console);
 const logger = Circuit.logger;
@@ -45,8 +46,13 @@ async function run() {
  */
 async function processItem(evt) {
   const item = evt.item;
+
   try {
     let responseText;
+
+    if (!conversations[item.convId]) {
+      conversations[item.convId] = await client.getConversationById(item.convId);
+    }
 
     switch (item.type) {
       case Circuit.Enums.ConversationItemType.TEXT:
@@ -90,6 +96,26 @@ function processTextItem(item) {
       console.debug(`[APP]: Skip text item as it is sent by the bot itself`);
       return;
     }
+
+    console.log(question);
+
+    const conv = conversations[item.convId];
+    if (conv.type === Circuit.Enums.ConversationType.GROUP) {
+      // Only process if bot is mentioned
+      const mentionedUsers = Circuit.Utils.createMentionedUsersArray(question);
+      if (!mentionedUsers.includes(client.loggedOnUser.userId)) {
+        console.debug('Group conversation message without being mentioned. Skip it.');
+        return;
+      }
+    } else if (conv.type === Circuit.Enums.ConversationType.DIRECT) {
+      // go on
+    } else {
+      console.log('Not supported conversation type: ' + conv.type);
+      return;
+    }
+
+    // Remove mentions (spans)
+    question = question.replace(/<span[^>]*>([^<]+)<\/span>/g, '');
 
     var options = {
       uri: 'https://westus.api.cognitive.microsoft.com/qnamaker/v2.0/knowledgebases/a6bc926f-c382-4133-bd2c-e52dce88f0d7/generateAnswer',
