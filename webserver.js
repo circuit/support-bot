@@ -13,7 +13,7 @@ const logger = bunyan.createLogger({
 module.exports = () => {
   const server = http.createServer((req, res) => {
     res.writeHead(200, {'Content-Type': 'text/plain'});
-    res.end('CTO Bot');
+    res.end('Circuit Support Bot is running');
   });
   const port = process.env.PORT || 1337;
   logger.info(`[APP]: Started webserver on port ${port}`);
