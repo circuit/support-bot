@@ -18,7 +18,7 @@
       "autoRenewToken": true
     },
     "qna_subscription": "env var QNA_SUBSCRIPTION",
-    "sdkLogLevel": "debug",
+    "sdkLogLevel": "error",
     "appLogLevel": "debug"
   }
 }

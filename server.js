@@ -161,10 +161,10 @@ function processTextItem(item) {
 
 run()
   .then(() => {
-    console.log('[APP]: Started sucessfully')
+    console.log('****************[APP]: Started sucessfully')
     logger.info('[APP]: Started sucessfully')
   })
   .catch(err => {
-    console.error(['APP]:', err)
+    console.error('**************[APP]:', err)
     logger.error('[APP]:', err)
   });
