@@ -14,6 +14,8 @@ const request = require('request');
 const Circuit = require('circuit-sdk');
 const config = require('./config')();
 const converter = require('./converter');
+const webserver = require('./webserver');
+
 
 // App and SDK loggers
 const logger = bunyan.createLogger({
@@ -43,7 +45,7 @@ logger.info('Configuration:', config);
 
 client = new Circuit.Client(config.circuit);
 
-async function run() {
+async function logon() {
   const user = await client.logon();
   logger.info(`[APP]: Logged on as ${user.emailAddress}`);
 
@@ -159,7 +161,9 @@ function processTextItem(item) {
   })
 }
 
-run()
+webserver();
+
+logon()
   .then(() => {
     console.log('****************[APP]: Started sucessfully')
     logger.info('[APP]: Started sucessfully')
