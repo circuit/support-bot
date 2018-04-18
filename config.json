@@ -1,0 +1,20 @@
+{
+  "development": {
+    "circuit": {
+      "client_id": "c6464fa783e5478dafc125f2eb5a9b75",
+      "client_secret": "see override",
+      "domain": "circuitsandbox.net",
+      "autoRenewToken": true
+    },
+    "qna_subscription": "see override"
+  },
+  "production": {
+    "circuit": {
+      "client_id": "???",
+      "client_secret": "",
+      "domain": "eu.yourcircuit.com",
+      "autoRenewToken": true
+    },
+    "qna_subscription": ""
+  }
+}
