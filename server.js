@@ -123,7 +123,7 @@ function processTextItem(item) {
     }
 
     const conv = conversations[item.convId];
-    if (conv.type === Circuit.Enums.ConversationType.GROUP) {
+    if (conv.type === Circuit.Enums.ConversationType.GROUP || conv.type === Circuit.Enums.ConversationType.COMMUNITY) {
       // Only process if bot is mentioned
       const mentionedUsers = Circuit.Utils.createMentionedUsersArray(question);
       if (!mentionedUsers.includes(client.loggedOnUser.userId)) {
