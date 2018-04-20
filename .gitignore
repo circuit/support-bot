@@ -1,9 +1,7 @@
 # config.json
 config-override.json
-EN
-EN_HTML
 node_modules
-faq.xlsx
+faq-articles.xlsx
 .vscode
 .DS_Store
 

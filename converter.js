@@ -35,7 +35,7 @@ function convert(html) {
     el.classList.add('pill');
     el.removeAttribute('width');
     el.removeAttribute('height');
-    el.src = 'https://www.circuit.com/documents/10182/11465/' + el.src;
+    el.src = 'https://www.circuit.com' + el.src;
   }
 
   // remove 'type' attribute

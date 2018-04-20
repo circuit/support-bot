@@ -1,3 +1,4 @@
+
 /**
  * Circuit FAQs Bot
  *
@@ -5,15 +6,13 @@
 
 'use strict';
 
-const Entities = require('html-entities').XmlEntities;
-const entities = new Entities();
 const util = require('util');
 const htmlToText = require('html-to-text');
-const request = require('request');
 const Circuit = require('circuit-sdk');
 const config = require('./config')();
-const converter = require('./converter');
 const webserver = require('./webserver');
+const ai = require('./qnamaker');
+const answers = require('./answers');
 
 // Circuit.setLogger(console);
 
@@ -28,6 +27,9 @@ config.qna_subscription = process.env.QNA_SUBSCRIPTION || config.qna_subscriptio
 console.info('Starting with configuration:', config);
 
 client = new Circuit.Client(config.circuit);
+ai.init({
+  key: config.qna_subscription
+});
 
 async function logon() {
   const user = await client.logon();
@@ -38,13 +40,6 @@ async function logon() {
 
   // Handle new conversation item events
   client.addEventListener('itemAdded', processItem);
-}
-
-function postProcessing(content) {
-  content = content.replace(/(<\s*\/?\s*)strong(\s*([^>]*)?\s*>)/gi ,'$b$2'); // switch strong to b
-  content = content.replace(/><\//g, ">&nbsp;</"); // more empty tags
-
-  return content;
 }
 
 /**
@@ -70,9 +65,9 @@ async function processItem(evt) {
       console.debug(`[APP]: Unhandled item type: ${item.type}`);
     }
 
-    responseText = postProcessing(responseText);
-
     if (responseText) {
+      console.log(`[APP]: Answer with:`, responseText);
+
       await client.addTextItem(item.convId, {
         contentType: Circuit.Enums.TextItemContentType.RICH,
         parentId: (item.parentItemId) ? item.parentItemId : item.itemId,
@@ -80,13 +75,17 @@ async function processItem(evt) {
       });
     }
   } catch (err) {
-    console.error('[APP]: Error processing item', item);
-    const msg = 'There was an error processing your request. Check if you find an answer on <a href="https://www.circuit.com/support">Circuit Support</a>.';
-    await client.addTextItem(item.convId, {
-      contentType: Circuit.Enums.TextItemContentType.RICH,
-      parentId: (item.parentItemId) ? item.parentItemId : item.itemId,
-      content: msg
-    });
+    console.error('[APP]: Error processing item', item, err);
+    try {
+      const msg = 'There was an error processing your request. Check if you find an answer on <a href="https://www.circuit.com/support">Circuit Support</a>.';
+      await client.addTextItem(item.convId, {
+        contentType: Circuit.Enums.TextItemContentType.RICH,
+        parentId: (item.parentItemId) ? item.parentItemId : item.itemId,
+        content: msg
+      });
+    } catch (err2) {
+      console.error('[APP]: Error processing item, and error sending error message in Circuit', err);
+    }
   }
 }
 
@@ -95,72 +94,61 @@ async function processItem(evt) {
  * @param {Object} item
  */
 function processTextItem(item) {
-  return new Promise((resolve, reject) => {
-    let question = item.text && (item.text.content || item.text.subject);
-    if (!question) {
-      console.debug(`[APP]: Skip text item as it has no content`);
-      return;
-    }
-    if (client.loggedOnUser.userId === item.creatorId) {
-      console.debug(`[APP]: Skip text item as it is sent by the bot itself`);
-      return;
-    }
+  let question = item.text && (item.text.content || item.text.subject);
+  if (!question) {
+    console.debug(`[APP]: Skip text item as it has no content`);
+    return Promise.resolve();
+  }
+  if (client.loggedOnUser.userId === item.creatorId) {
+    console.debug(`[APP]: Skip text item as it is sent by the bot itself`);
+    return Promise.resolve();
+  }
 
-    const conv = conversations[item.convId];
-    if (conv.type === Circuit.Enums.ConversationType.GROUP || conv.type === Circuit.Enums.ConversationType.COMMUNITY) {
-      // Only process if bot is mentioned
-      const mentionedUsers = Circuit.Utils.createMentionedUsersArray(question);
-      if (!mentionedUsers.includes(client.loggedOnUser.userId)) {
-        console.debug('Group conversation message without being mentioned. Skip it.');
+  const conv = conversations[item.convId];
+  if (conv.type === Circuit.Enums.ConversationType.GROUP || conv.type === Circuit.Enums.ConversationType.COMMUNITY) {
+    // Only process if bot is mentioned
+    const mentionedUsers = Circuit.Utils.createMentionedUsersArray(question);
+    if (!mentionedUsers.includes(client.loggedOnUser.userId)) {
+      console.debug('Group conversation message without being mentioned. Skip it.');
+      return Promise.resolve();
+    }
+  }
+
+  // Remove mentions (spans)
+  question = question.replace(/<span[^>]*>([^<]+)<\/span>/g, '');
+
+  // Remove html if any in the question
+  question = htmlToText.fromString(question);
+
+  console.log('[APP]: Lookup AI service for question: ' + question);
+
+  return ai.ask(question)
+    .then(res => {
+      // Expects an array of objects with a 'answer' and 'score' property (0..99)
+      if (!res) {
+        resolve('Sorry, could not find an answer. Check if you find an answer on <a href="https://www.circuit.com/support">Circuit Support</a>.');
         return;
       }
-    } else if (conv.type === Circuit.Enums.ConversationType.DIRECT) {
-      // go on
-    } else {
-      console.info('Not supported conversation type: ' + conv.type);
-      return;
-    }
 
-    // Remove mentions (spans)
-    question = question.replace(/<span[^>]*>([^<]+)<\/span>/g, '');
-
-    var options = {
-      uri: 'https://westus.api.cognitive.microsoft.com/qnamaker/v2.0/knowledgebases/a6bc926f-c382-4133-bd2c-e52dce88f0d7/generateAnswer',
-      method: 'POST',
-      json: {
-        'question': htmlToText.fromString(question)
-      },
-      headers: {
-        'Ocp-Apim-Subscription-Key': config.qna_subscription
-      }
-    };
-
-    console.log('[APP]: Lookup service for question: ' + question);
-    request(options, function (error, response, body) {
-      if (!error && response.statusCode === 200) {
-        let firstAnswer = body.answers[0];
-        if (firstAnswer.score > 40) {
-          let answer = entities.decode(firstAnswer.answer);
-          console.log(`[APP]: Answer to '${question}' with score [${firstAnswer.score}]:`, answer);
-
-          resolve(answer);
-          return;
-        }
-
+      // Only handle first answer for now
+      res = res[0];
+      if (res.score && res.score < 40) {
         resolve('Sorry, could not find a good answer. Check if you find an answer on <a href="https://www.circuit.com/support">Circuit Support</a>.');
         return;
       }
-      reject(error);
+
+      if (res.id) {
+        // Need to look up answer text via 'answers' module
+        return answers.lookup(res.id);
+      } else {
+        return res.answer;
+      }
     });
-  })
 }
 
+// Start webserver just to check if app is running
 webserver();
 
 logon()
-  .then(() => {
-    console.log('[APP]: Started sucessfully')
-  })
-  .catch(err => {
-    console.error('[APP]:', err)
-  });
+  .then(() => console.log('[APP]: Started sucessfully'))
+  .catch(err => console.error('[APP]:', err));
