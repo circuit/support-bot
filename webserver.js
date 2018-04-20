@@ -1,14 +1,7 @@
 'use strict';
 
 const http = require('http');
-const bunyan = require('bunyan');
 const config = require('./config')();
-
-const logger = bunyan.createLogger({
-  name: 'web',
-  stream: process.stdout,
-  level: config.appLogLevel
-});
 
 module.exports = () => {
   const server = http.createServer((req, res) => {
@@ -16,6 +9,6 @@ module.exports = () => {
     res.end('Circuit Support Bot is running');
   });
   const port = process.env.PORT || 1337;
-  logger.info(`[APP]: Started webserver on port ${port}`);
+  console.info(`[APP]: Started webserver on port ${port}`);
   server.listen(port);
 }

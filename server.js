@@ -5,7 +5,6 @@
 
 'use strict';
 
-const bunyan = require('bunyan');
 const Entities = require('html-entities').XmlEntities;
 const entities = new Entities();
 const util = require('util');
@@ -16,22 +15,7 @@ const config = require('./config')();
 const converter = require('./converter');
 const webserver = require('./webserver');
 
-
-// App and SDK loggers
-const logger = bunyan.createLogger({
-  name: 'app',
-  stream: process.stdout,
-  level: config.appLogLevel
-});
-logger.info('[APP]: app logger set to level: ' + config.appLogLevel);
-
-Circuit.setLogger(bunyan.createLogger({
-  name: 'sdk',
-  stream: process.stdout,
-  level: config.sdkLogLevel
-}));
-logger.info('[APP]: sdk logger set to level: ' + config.sdkLogLevel);
-
+// Circuit.setLogger(console);
 
 // Local variables
 let client;
@@ -41,16 +25,16 @@ config.circuit.client_id = process.env.CLIENT_ID || config.circuit.client_id;
 config.circuit.client_secret = process.env.CLIENT_SECRET || config.circuit.client_secret;
 config.circuit.domain = process.env.DOMAIN || config.circuit.domain;
 config.qna_subscription = process.env.QNA_SUBSCRIPTION || config.qna_subscription;
-logger.info('Configuration:', config);
+console.info('Starting with configuration:', config);
 
 client = new Circuit.Client(config.circuit);
 
 async function logon() {
   const user = await client.logon();
-  logger.info(`[APP]: Logged on as ${user.emailAddress}`);
+  console.info(`[APP]: Logged on as ${user.emailAddress}`);
 
   await client.setPresence({state: Circuit.Enums.PresenceState.AVAILABLE});
-  logger.info('[APP]: Presence set to AVAILABLE');
+  console.info('[APP]: Presence set to AVAILABLE');
 
   // Handle new conversation item events
   client.addEventListener('itemAdded', processItem);
@@ -83,10 +67,10 @@ async function processItem(evt) {
         break;
 
       default:
-        logger.debug(`[APP]: Unhandled item type: ${item.type}`);
+      console.debug(`[APP]: Unhandled item type: ${item.type}`);
     }
 
-    responseText= postProcessing(responseText);
+    responseText = postProcessing(responseText);
 
     if (responseText) {
       await client.addTextItem(item.convId, {
@@ -96,7 +80,7 @@ async function processItem(evt) {
       });
     }
   } catch (err) {
-    logger.error('[APP]: Error processing item', item);
+    console.error('[APP]: Error processing item', item);
     const msg = 'There was an error processing your request. Check if you find an answer on <a href="https://www.circuit.com/support">Circuit Support</a>.';
     await client.addTextItem(item.convId, {
       contentType: Circuit.Enums.TextItemContentType.RICH,
@@ -114,11 +98,11 @@ function processTextItem(item) {
   return new Promise((resolve, reject) => {
     let question = item.text && (item.text.content || item.text.subject);
     if (!question) {
-      logger.debug(`[APP]: Skip text item as it has no content`);
+      console.debug(`[APP]: Skip text item as it has no content`);
       return;
     }
     if (client.loggedOnUser.userId === item.creatorId) {
-      logger.debug(`[APP]: Skip text item as it is sent by the bot itself`);
+      console.debug(`[APP]: Skip text item as it is sent by the bot itself`);
       return;
     }
 
@@ -127,13 +111,13 @@ function processTextItem(item) {
       // Only process if bot is mentioned
       const mentionedUsers = Circuit.Utils.createMentionedUsersArray(question);
       if (!mentionedUsers.includes(client.loggedOnUser.userId)) {
-        logger.debug('Group conversation message without being mentioned. Skip it.');
+        console.debug('Group conversation message without being mentioned. Skip it.');
         return;
       }
     } else if (conv.type === Circuit.Enums.ConversationType.DIRECT) {
       // go on
     } else {
-      logger.info('Not supported conversation type: ' + conv.type);
+      console.info('Not supported conversation type: ' + conv.type);
       return;
     }
 
@@ -151,12 +135,14 @@ function processTextItem(item) {
       }
     };
 
+    console.log('[APP]: Lookup service for question: ' + question);
     request(options, function (error, response, body) {
       if (!error && response.statusCode === 200) {
         let firstAnswer = body.answers[0];
         if (firstAnswer.score > 40) {
           let answer = entities.decode(firstAnswer.answer);
-          logger.debug(`[APP]: Answer to '${question}':`, answer);
+          console.log(`[APP]: Answer to '${question}' with score [${firstAnswer.score}]:`, answer);
+
           resolve(answer);
           return;
         }
@@ -173,10 +159,8 @@ webserver();
 
 logon()
   .then(() => {
-    console.log('****************[APP]: Started sucessfully')
-    logger.info('[APP]: Started sucessfully')
+    console.log('[APP]: Started sucessfully')
   })
   .catch(err => {
-    console.error('**************[APP]:', err)
-    logger.error('[APP]:', err)
+    console.error('[APP]:', err)
   });
