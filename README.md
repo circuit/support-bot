@@ -1,11 +1,7 @@
-Circuit Support Bot
+# Circuit QnA Bot framework
 
-AI Bot using Circuit FAQs and https://qnamaker.ai. Invite bot by adding support@circuit.com to a direct or group conversation and ask a question.
-
-For group conversations the Bot has to be *mentioned*.
-
-Training the Bot
-* App is using https://qnamaker.ai
-* Data is the FAQs at https://www.circuit.com/unifyportalfaqlist
-* FAQs are in dita format. https://www.dita-ot.org/ is used to convert to HTML, then trainer.js and converter.js are used to normalize text to Circuit supported formatting.
+TODO:
+- plugin framework for AI service (e.g. qnamaker.ai, dialogflow, etc)
+- plugin framework for answer lookups (e.g. scrape from Circuit FAQ pages, or any other source to lookup answers based on an ID)
+- optional learning for AI services that support returning multiple answers
 
