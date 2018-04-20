@@ -126,15 +126,13 @@ function processTextItem(item) {
     .then(res => {
       // Expects an array of objects with a 'answer' and 'score' property (0..99)
       if (!res) {
-        resolve('Sorry, could not find an answer. Check if you find an answer on <a href="https://www.circuit.com/support">Circuit Support</a>.');
-        return;
+        return('Sorry, could not find an answer. Check if you find an answer on <a href="https://www.circuit.com/support">Circuit Support</a>.');
       }
 
       // Only handle first answer for now
       res = res[0];
       if (res.score && res.score < 40) {
-        resolve('Sorry, could not find a good answer. Check if you find an answer on <a href="https://www.circuit.com/support">Circuit Support</a>.');
-        return;
+        return('Sorry, could not find a good answer. Check if you find an answer on <a href="https://www.circuit.com/support">Circuit Support</a>.');
       }
 
       if (res.id) {
