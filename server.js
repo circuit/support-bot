@@ -124,6 +124,8 @@ function processTextItem(item) {
 
   return ai.ask(question)
     .then(res => {
+      console.debug('AI response:', res);
+
       // Expects an array of objects with a 'answer' and 'score' property (0..99)
       if (!res) {
         return('Sorry, could not find an answer. Check if you find an answer on <a href="https://www.circuit.com/support">Circuit Support</a>.');
