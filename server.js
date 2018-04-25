@@ -124,7 +124,7 @@ function processTextItem(item) {
 
   return ai.ask(question)
     .then(res => {
-      console.info('AI response a : ', res);
+      console.info('AI response ab : ', res);
 
       // Expects an array of objects with a 'answer' and 'score' property (0..99)
       if (!res) {
