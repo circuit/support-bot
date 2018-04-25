@@ -133,7 +133,7 @@ function processTextItem(item) {
 
       // Only handle first answer for now
       res = res[0];
-      if (res.score && res.score < 40) {
+      if (res.score !== undefined && res.score < 40) {
         return('Sorry, could not find a good answer. Check if you find an answer on <a href="https://www.circuit.com/support">Circuit Support</a>.');
       }
 
