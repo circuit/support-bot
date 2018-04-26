@@ -28,15 +28,13 @@ function ask(question) {
     request(options, (error, response, body) => {
       if (!error && response.statusCode === 200) {
         const res = body.answers.map(a => {
-          const res = {
-            id: a.answer,
-            score: a.score
-          };
+          const r = { score: a.score };
           if (Number.isInteger(a.answer)) {
-            res.id = a.answer;
+            r.id = a.answer;
           } else {
-            res.answer = a.answer;
+            r.answer = a.answer;
           }
+          return r;
         });
         resolve(res);
         return;
