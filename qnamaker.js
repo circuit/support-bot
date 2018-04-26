@@ -25,16 +25,11 @@ function ask(question) {
       }
     };
 
-
     request(options, (error, response, body) => {
       if (!error && response.statusCode === 200) {
         const res = body.answers.map(a => {
           const r = { score: a.score };
-          if (Number.isInteger(a.answer)) {
-            r.id = a.answer;
-          } else {
-            r.answer = a.answer;
-          }
+          r[isNaN(a.answer) ? 'answer' : 'id'] = a.answer;
           return r;
         });
         console.debug('ai answer: ', res);
