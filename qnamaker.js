@@ -25,6 +25,7 @@ function ask(question) {
       }
     };
 
+
     request(options, (error, response, body) => {
       if (!error && response.statusCode === 200) {
         const res = body.answers.map(a => {
