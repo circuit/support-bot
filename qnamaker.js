@@ -28,7 +28,7 @@ function ask(question) {
     request(options, (error, response, body) => {
       if (!error && response.statusCode === 200) {
         const res = body.answers.map(a => {
-          const r = { score: a.score };
+          const r = {score: a.score};
           if (Number.isInteger(a.answer)) {
             r.id = a.answer;
           } else {
