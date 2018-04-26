@@ -37,6 +37,7 @@ function ask(question) {
           }
           return r;
         });
+        console.debug('ai answer: ', res);
         resolve(res);
         return;
       }
