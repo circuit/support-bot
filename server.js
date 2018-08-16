@@ -75,7 +75,7 @@ async function processItem(evt) {
       console.debug(`[APP]: Unhandled item type: ${item.type}`);
     }
   } catch (err) {
-    console.error('[APP]: Error processing item', item, err);
+    console.error(`[APP]: Error processing itemId: ${item && item.itemId}`, err);
     const msg = 'There was an error processing your request. Check if you find an answer on <a href="https://www.circuit.com/support">Circuit Support</a>.';
     await client.addTextItem(item.convId, {
       contentType: Circuit.Enums.TextItemContentType.RICH,
