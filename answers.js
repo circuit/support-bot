@@ -60,7 +60,7 @@ function convert(elem) {
     }
   }
 
-  var stripAttrs = ['summary', 'type', 'headers', 'frame', 'rules', 'id'];
+  var stripAttrs = ['summary', 'type', 'headers', 'frame', 'rules', 'id', 'target'];
   stripAttrs.forEach(attr => {
     const elems = elem.querySelectorAll(`[${attr}]`);
     for (let el of elems) {

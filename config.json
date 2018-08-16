@@ -6,7 +6,14 @@
       "domain": "circuitsandbox.net",
       "autoRenewToken": true
     },
-    "qna_subscription": "see override",
+    "qnamaker": {
+      "host": "https://circuitsupportservice.azurewebsites.net/qnamaker",
+      "hostv4": "https://westus.api.cognitive.microsoft.com/qnamaker/v4.0/knowledgebases",
+      "knowledgebase": "98cbd972-02ce-4628-9a39-d0aa2eea1910",
+      "key": "see override",
+      "subscriptionKey": "see override"
+    },
+    "moderatorConvId": "dd8daead-6e3f-476e-a84c-3f47f99c98ca",
     "sdkLogLevel": "debug",
     "appLogLevel": "debug"
   },
@@ -17,7 +24,13 @@
       "domain": "env var DOMAIN",
       "autoRenewToken": true
     },
-    "qna_subscription": "env var QNA_SUBSCRIPTION",
+    "qnamaker": {
+      "host": "https://circuitsupportservice.azurewebsites.net/qnamaker",
+      "hostv4": "https://westus.api.cognitive.microsoft.com/qnamaker/v4.0/knowledgebases",
+      "knowledgebase": "98cbd972-02ce-4628-9a39-d0aa2eea1910",
+      "key": "env var ENDPOINT_KEY",
+      "subscriptionKey": "env var SUBSCRIPTION_KEY"
+    },
     "sdkLogLevel": "error",
     "appLogLevel": "debug"
   }

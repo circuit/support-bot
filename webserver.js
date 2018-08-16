@@ -1,14 +1,12 @@
 'use strict';
 
-const http = require('http');
+const express = require('express');
+const app = express()
 const config = require('./config')();
+const PORT = process.env.PORT || 1337;
 
-module.exports = () => {
-  const server = http.createServer((req, res) => {
-    res.writeHead(200, {'Content-Type': 'text/plain'});
-    res.end('Circuit Support Bot is running');
-  });
-  const port = process.env.PORT || 1337;
-  console.info(`[APP]: Started webserver on port ${port}`);
-  server.listen(port);
+module.exports = emitter => {
+  app.get('/', (req, res) => res.send('Circuit QnA Bot is running'));
+
+  app.listen(PORT, () => console.log(`[APP]: Started webserver on port ${PORT}`))
 }
