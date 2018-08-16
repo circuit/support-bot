@@ -89,13 +89,15 @@ function publish() {
       }
     };
 
-    request(options, (error, response, body) => {
-      if (!error) {
-        resolve();
-        return;
-      }
-      reject(error);
-    });
+    setTimeout(() => {
+      request(options, (error, response, body) => {
+        if (!error) {
+          resolve();
+          return;
+        }
+        reject(error);
+      });
+    }, 5000);
   });
 }
 
@@ -135,14 +137,12 @@ function addAlternateQuestions(id, questions) {
       }
     };
 
+    resolve();
+
     request(options, (error, response, body) => {
-      if (!error) {
-        publish()
-          .then(resolve)
-          .catch(reject);
-        return;
+      if (error) {
+        console.error('Error publishing to AI service', error);
       }
-      reject(error);
     });
   });
 }

@@ -284,6 +284,8 @@ async function processTextItem(item) {
   // Remove html if any in the question
   question = htmlToText.fromString(question);
 
+  question = question.trim();
+
   console.log(`[APP]: Lookup AI service for question: '${question}'`);
   let aiRes = await ai.ask(question);
 
@@ -367,7 +369,7 @@ function buildMatchingQuestionsForm(formId, aiRes) {
   // I.e. Don't display questions learned by user entry
   aiRes.forEach(res => {
     form.controls[0].options.push({
-      text: `${res.questions[0]} (${res.score}, ${res.answer}, ${res.id})`,
+      text: `${res.questions[0]} (${res.score}%)`,
       value: res.id.toString()
     });
   });
