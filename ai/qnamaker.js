@@ -137,12 +137,15 @@ function addAlternateQuestions(id, questions) {
       }
     };
 
-    resolve();
-
     request(options, (error, response, body) => {
-      if (error) {
-        console.error('Error publishing to AI service', error);
+      if (!error) {
+        resolve();
+
+        // Publish async
+        publish().catch(reject);
+        return;
       }
+      reject(error);
     });
   });
 }
@@ -186,9 +189,10 @@ async function addNewAnswer(questions, answer, creatorId) {
 
     request(options, (error, response, body) => {
       if (!error) {
-        publish()
-          .then(resolve)
-          .catch(reject);
+        resolve();
+
+        // Publish async
+        publish().catch(reject);
         return;
       }
       reject(error);
