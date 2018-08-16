@@ -15,6 +15,9 @@ const webserver = require('./webserver');
 const ai = require('./ai/qnamaker');
 const answers = require('./answers');
 
+console.log('process.env.ENDPOINT_KEY:', process.env.ENDPOINT_KEY)
+console.log('process.env.CLIENT_SECRET:', process.env.CLIENT_SECRET)
+
 // Overwrite config with env variables (production)
 config.circuit.client_id = process.env.CLIENT_ID || config.circuit.client_id;
 config.circuit.client_secret = process.env.CLIENT_SECRET || config.circuit.client_secret;
