@@ -344,7 +344,7 @@ function applyThresholds(aiRes) {
   aiRes = aiRes.slice(0, Math.min(aiRes.length, 3));
 
   // Only get answers with scores above threshold
-  aiRes = aiRes.filter(answer => answer.score > 30);
+  aiRes = aiRes.filter(answer => answer.score > 20);
 
   return aiRes;
 }
