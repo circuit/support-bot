@@ -31,6 +31,7 @@
       "key": "env var ENDPOINT_KEY",
       "subscriptionKey": "env var SUBSCRIPTION_KEY"
     },
+    "moderatorConvId": "729a4af8-7ee1-4894-aa46-54c05881c9eb",
     "sdkLogLevel": "error",
     "appLogLevel": "debug"
   }

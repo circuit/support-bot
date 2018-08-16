@@ -6,7 +6,6 @@ const answerToIdHashtable = {};
 
 function init(cfg) {
   config = cfg;
-  console.log('qna maker config:', config);
 
   // Get mapping of article ID to unique answer ID, but only for
   // answers entered by import of faq-articles.xlsx
@@ -66,10 +65,10 @@ function ask(question) {
       }
     };
 
-    console.debug('Options for ai.ask request', options);
+    //console.debug('Options for ai.ask request', options);
 
     request(options, (error, response, body) => {
-      console.debug('Response for ai.ask request', response);
+      //console.debug('Response for ai.ask request', response);
       if (!error && response.statusCode === 200) {
         resolve(body.answers);
         return;
