@@ -58,7 +58,8 @@ function ask(question) {
       method: 'POST',
       json: {
         'question': question,
-        'top': 3
+        'top': 3,
+        'isTest': true
       },
       headers: {
         'Authorization': `EndpointKey ${config.key}`
