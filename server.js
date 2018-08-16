@@ -15,16 +15,16 @@ const webserver = require('./webserver');
 const ai = require('./ai/qnamaker');
 const answers = require('./answers');
 
-console.log('process.env.ENDPOINT_KEY:', process.env.ENDPOINT_KEY)
-console.log('process.env.CLIENT_SECRET:', process.env.CLIENT_SECRET)
-
 // Overwrite config with env variables (production)
 config.circuit.client_id = process.env.CLIENT_ID || config.circuit.client_id;
 config.circuit.client_secret = process.env.CLIENT_SECRET || config.circuit.client_secret;
 config.circuit.domain = process.env.DOMAIN || config.circuit.domain;
-config.qna_subscription = process.env.QNA_SUBSCRIPTION || config.qna_subscription;
-config.key = process.env.ENDPOINT_KEY || config.key;
-config.subscriptionKey = process.env.SUBSCRIPTION_KEY || config.subscriptionKey;
+
+config.qnamaker = config.qnamaker || {};
+config.qnamaker.key = process.env.ENDPOINT_KEY || config.key;
+config.qnamaker.subscriptionKey = process.env.SUBSCRIPTION_KEY || config.subscriptionKey;
+
+console.log('[APP]: app config:', config);
 
 // Main emitter for communication
 const emitter = new EventEmitter();
