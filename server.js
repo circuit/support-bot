@@ -21,8 +21,8 @@ config.circuit.client_secret = process.env.CLIENT_SECRET || config.circuit.clien
 config.circuit.domain = process.env.DOMAIN || config.circuit.domain;
 
 config.qnamaker = config.qnamaker || {};
-config.qnamaker.key = process.env.ENDPOINT_KEY || config.key;
-config.qnamaker.subscriptionKey = process.env.SUBSCRIPTION_KEY || config.subscriptionKey;
+config.qnamaker.key = process.env.ENDPOINT_KEY || config.qnamaker.key;
+config.qnamaker.subscriptionKey = process.env.SUBSCRIPTION_KEY || config.qnamaker.subscriptionKey;
 
 console.log('[APP]: app config:', config);
 
@@ -171,6 +171,8 @@ async function processForm(evt) {
       if (!res) {
         console.error('Form or question not found in cache', pending);
         reply = `Sorry, there has been a problem with this older question. Please ask again.`;
+      } else if (isNaN(res.answer)) {
+        reply = `<u>${res.questions[0]}</u><br><br>${res.answer}`;
       } else {
         reply = `<u>${res.questions[0]}</u><br><br>${await answers.lookup(res.answer)}`;
       }
