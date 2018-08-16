@@ -92,9 +92,11 @@ function publish() {
     setTimeout(() => {
       request(options, (error, response, body) => {
         if (!error) {
+          console.log('AI service published');
           resolve();
           return;
         }
+        console.error('AI service publish error', error);
         reject(error);
       });
     }, 5000);
