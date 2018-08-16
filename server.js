@@ -119,9 +119,9 @@ async function processForm(evt) {
         return;
       }
 
-      const betterQuestion = form.data[0].value;
-      const articleId = form.data[1].value;
-      let answerText = form.data[2].value;
+      const betterQuestion = form.data[0].value.trim();
+      const articleId = form.data[1].value.trim();
+      let answerText = form.data[2].value.trim();
 
       if (articleId) {
          // ArticleID is provided. Add the asked question and optionally a 'better' question to this answer
@@ -261,6 +261,8 @@ async function processTextItem(item) {
     console.debug(`[APP]: Skip text item as it has no content`);
     return;
   }
+  question = question.trim();
+
   if (client.loggedOnUser.userId === item.creatorId) {
     console.debug(`[APP]: Skip text item as it is sent by the bot itself`);
     return;
