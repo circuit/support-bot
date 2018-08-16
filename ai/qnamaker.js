@@ -79,6 +79,7 @@ function ask(question) {
 }
 
 function publish() {
+  console.log('AI service publish started');
   return new Promise((resolve, reject) => {
     var options = {
       uri: `${config.hostv4}/${config.knowledgebase}`,
@@ -162,7 +163,7 @@ function addAlternateQuestions(id, questions) {
 async function addNewAnswer(questions, answer, creatorId) {
   questions = Array.isArray(questions) ? questions : [questions];
   return new Promise((resolve, reject) => {
-    var options = {
+    const options = {
       uri: `${config.hostv4}/${config.knowledgebase}`,
       method: 'PATCH',
       json: {
