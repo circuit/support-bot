@@ -22,12 +22,14 @@ function init(cfg) {
 
 /**
  * Download complete knowledgebase
+ * @param {Boolean} prod If true, the download production dataset
  * @returns {Object} Promise with answer object
  */
-function download() {
+function download(prod) {
+  const db = prod ? 'Prod' : 'Test';
   return new Promise((resolve, reject) => {
     var options = {
-      uri: `${config.hostv4}/${config.knowledgebase}/Prod/qna`,
+      uri: `${config.hostv4}/${config.knowledgebase}/${db}/qna`,
       method: 'GET',
       headers: {
         'Ocp-Apim-Subscription-Key': `${config.subscriptionKey}`,
@@ -49,9 +51,10 @@ function download() {
 /**
  * Ask AI service "QnA Maker" for an answer (id) to a question.
  * @param {String} question
+ * @param {Boolean} prod If true, the published production dataset is queried
  * @returns {Object} Promise with literal object with `id` and `score` properties, or `undefined` if no answer found.
  */
-function ask(question) {
+function ask(question, prod) {
   return new Promise((resolve, reject) => {
     const options = {
       uri: `${config.host}/knowledgebases/${config.knowledgebase}/generateAnswer`,
@@ -59,18 +62,19 @@ function ask(question) {
       json: {
         'question': question,
         'top': 3,
-        'isTest': true
+        'isTest': !prod
       },
       headers: {
         'Authorization': `EndpointKey ${config.key}`
       }
     };
 
-    //console.debug('Options for ai.ask request', options);
+    console.debug('generateAnswer request', options);
 
     request(options, (error, response, body) => {
-      //console.debug('Response for ai.ask request', response);
+      console.debug('Response for generateAnswer request', response);
       if (!error && response.statusCode === 200) {
+        console.info('Answers:', body.answers);
         resolve(body.answers);
         return;
       }
@@ -106,8 +110,7 @@ function publish() {
 }
 
 /**
- * Teach AI service "QnA Maker" with one or more alternate questions to an existing answer,
- * and publish the changes.
+ * Teach AI service "QnA Maker" with one or more alternate questions to an existing answer.
  * @param {Number|String} id ID for answer, or if a string is passed then assume its the answer (article ID)
  * @param {String[]} questions Alternate questions
  * @returns {Object} Promise without data
@@ -141,12 +144,12 @@ function addAlternateQuestions(id, questions) {
       }
     };
 
+    console.debug('addAlternateQuestions request', options);
+
     request(options, (error, response, body) => {
       if (!error) {
+        console.info('Alternate question added to ' + id, questions);
         resolve();
-
-        // Publish async
-        publish().catch(reject);
         return;
       }
       reject(error);
@@ -155,8 +158,7 @@ function addAlternateQuestions(id, questions) {
 }
 
 /**
- * Teach AI service "QnA Maker" with a new question and answer pair and publish
- * the changes.
+ * Teach AI service "QnA Maker" with a new question and answer pair.
  * @param {String[]} questions Questions
  * @param {String} answer Answer text
  * @returns {Object} Promise without data
@@ -191,12 +193,12 @@ async function addNewAnswer(questions, answer, creatorId) {
       }
     };
 
+    console.debug('addNewAnswer request', options);
+
     request(options, (error, response, body) => {
       if (!error) {
         resolve();
-
-        // Publish async
-        publish().catch(reject);
+        console.info('New answer added', questions, answer, creatorId);
         return;
       }
       reject(error);

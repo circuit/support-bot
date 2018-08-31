@@ -14,6 +14,7 @@ const config = require('./config')();
 const webserver = require('./webserver');
 const ai = require('./ai/qnamaker');
 const answers = require('./answers');
+require('log-timestamp');
 
 // Overwrite config with env variables (production)
 config.circuit.client_id = process.env.CLIENT_ID || config.circuit.client_id;
@@ -114,7 +115,7 @@ async function processForm(evt) {
       // This the form posted by the moderator with either the article ID or an answer, and
       // optionally a better question
       if (form.data[3].value !== 'answered') {
-        reply = `This question was marked as not relevenat and will not be answered.`;
+        reply = `This question was marked as not relevant and will not be answered.`;
         await updateTextItem(pending.itemId, reply, form.id);
         return;
       }
@@ -122,15 +123,17 @@ async function processForm(evt) {
       const betterQuestion = form.data[0].value.trim();
       const articleId = form.data[1].value.trim();
       let answerText = form.data[2].value.trim();
+      const questions = [pending.question];
+      betterQuestion && questions.push(questions);
 
       if (articleId) {
          // ArticleID is provided. Add the asked question and optionally a 'better' question to this answer
-        await ai.addAlternateQuestions(articleId, [pending.question, betterQuestion]);
+        await ai.addAlternateQuestions(articleId, questions);
 
         answerText = await answers.lookup(articleId);
       } else if (answerText) {
          // New answer is provided. Add a new answer with the question and optionally a 'better' question
-        await ai.addNewAnswer([pending.question, betterQuestion], answerText, submitterId);
+        await ai.addNewAnswer(questions, answerText, submitterId);
       } else {
         console.error('Moderator did not specify either an articleId or an answer');
         return;
@@ -207,7 +210,7 @@ async function postInModerationConv(question, formId) {
       text: `<b>${question}</b>`
     }, {
       type: Circuit.Enums.FormControlType.LABEL,
-      text: 'Opionally provide a better question, then provide the article ID for an existing answer, <b>or</b> create a new answer.'
+      text: 'Optionally provide a better question, then provide the article ID for an existing answer, <b>or</b> create a new answer.'
     }, {
       name: 'betterQuestion',
       type: Circuit.Enums.FormControlType.INPUT,
