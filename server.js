@@ -96,24 +96,25 @@ async function processItem(evt) {
 async function processForm(evt) {
   const {itemId, form, submitterId} = evt;
 
-  try {
-    if (!form.data || !form.data.length) {
-      // Invalid form data
-      return;
-    }
 
-    let reply;
-    const pending = pendingQuestions.get(form.id);
-    if (!pending) {
-      console.error('Form or question not found in cache', pending);
-      reply = `Sorry, there has been a problem with this older question. Please ask again.`;
-      await updateTextItem(itemId, reply, form.id);
-      return;
-    }
+  if (!form.data || !form.data.length) {
+    // Invalid form data
+    return;
+  }
 
-    if (form.data[0].name === 'betterQuestion') {
-      // This the form posted by the moderator with either the article ID or an answer, and
-      // optionally a better question
+  let reply;
+  const pending = pendingQuestions.get(form.id);
+  if (!pending) {
+    console.error('Form or question not found in cache', pending);
+    reply = `Sorry, there has been a problem with this older question. Please ask again.`;
+    await updateTextItem(itemId, reply, form.id);
+    return;
+  }
+
+  if (form.data[0].name === 'betterQuestion') {
+    // This the form posted by the moderator with either the article ID or an answer, and
+    // optionally a better question
+    try {
       if (form.data[3].value !== 'answered') {
         reply = `This question was marked as not relevant and will not be answered.`;
         await updateTextItem(pending.itemId, reply, form.id);
@@ -127,12 +128,13 @@ async function processForm(evt) {
       betterQuestion && questions.push(questions);
 
       if (articleId) {
-         // ArticleID is provided. Add the asked question and optionally a 'better' question to this answer
+        // ArticleID is provided. Add the asked question and optionally a 'better' question to this answer
+
         await ai.addAlternateQuestions(articleId, questions);
 
         answerText = await answers.lookup(articleId);
       } else if (answerText) {
-         // New answer is provided. Add a new answer with the question and optionally a 'better' question
+          // New answer is provided. Add a new answer with the question and optionally a 'better' question
         await ai.addNewAnswer(questions, answerText, submitterId);
       } else {
         console.error('Moderator did not specify either an articleId or an answer');
@@ -154,10 +156,19 @@ async function processForm(evt) {
       reply += `<i>Better question</i>: ${betterQuestion ? betterQuestion : 'Not provided'}<br>`;
       reply += `<i>Answer</i>: ${answerText}`;
       await updateTextItem(itemId, reply, form.id);
-
-      return;
+    } catch (err) {
+      console.error(`[APP]: Error processing form posted by moderator for itemId: ${itemId}`, err);
+      const item = await client.getItemById(itemId);
+      await client.addTextItem(item.convId, {
+        contentType: Circuit.Enums.TextItemContentType.RICH,
+        parentId: (item.parentItemId) ? item.parentItemId : item.itemId,
+        content: err
+      });
     }
+    return;
+  }
 
+  try {
     // This is the form posted by the user
     const selection = parseInt(form.data[0].value);
     if (selection === -1) {
@@ -186,7 +197,7 @@ async function processForm(evt) {
       pendingQuestions.delete(form.id);
     }
   } catch (err) {
-    console.error(`[APP]: Error processing form for item ${itemId}`, err);
+    console.error(`[APP]: Error processing form posted by user for itemId: ${itemId}`, err);
   }
 }
 

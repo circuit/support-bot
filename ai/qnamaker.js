@@ -116,11 +116,13 @@ function publish() {
  * @returns {Object} Promise without data
  */
 function addAlternateQuestions(id, questions) {
+  const idStr = id;
   if (typeof id === 'string') {
     id = answerToIdHashtable[id];
   }
   if (!id) {
-    throw new Error('Article ID not found for ID: ' + id);
+    console.error('Article not found with ID: ' + id);
+    return Promise.reject(`Article ID ${idStr} not supported. Reason may be that this is a newly added article.`);
   }
 
   questions = Array.isArray(questions) ? questions : [questions];
