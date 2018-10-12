@@ -116,8 +116,15 @@ async function processForm(evt) {
     // optionally a better question
     try {
       if (form.data[3].value !== 'answered') {
+        // Update bot reply in user posted conversation
         reply = `This question was marked as not relevant and will not be answered.`;
         await updateTextItem(pending.itemId, reply, form.id);
+
+        // Update moderator text item
+        reply = 'Question rejected.<br><br>';
+        reply += `<i>Original question</i>: ${pending.question}<br>`;
+        await updateTextItem(itemId, reply, form.id);
+
         return;
       }
 
