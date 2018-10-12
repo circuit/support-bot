@@ -128,15 +128,17 @@ async function processForm(evt) {
         return;
       }
 
-      const betterQuestion = form.data[0].value.trim();
+      let betterQuestion = form.data[0].value.trim();
       const articleId = form.data[1].value.trim();
       let answerText = form.data[2].value.trim();
       const questions = [pending.question];
-      betterQuestion && questions.push(questions);
+      betterQuestion && questions.push(betterQuestion);
+      const skipTeaching = betterQuestion && betterQuestion.toLowerCase() === 'skip';
 
-      if (betterQuestion.toLowerCase() === 'skip') {
+      if (skipTeaching) {
         // For demo purposes skip teaching the bot when 'skip' is entered in
         // the 'Better question' field.
+        betterQuestion = null;
         console.log('Skip teaching the bot for demo purposes. Question: ' +  pending.question);
       } else {
         if (articleId) {
@@ -164,9 +166,9 @@ async function processForm(evt) {
       await updateTextItem(pending.itemId, reply, form.id);
 
       // Update moderator item
-      reply = 'AI database updated.<br><br>';
+      reply = (skipTeaching ? 'AI database update skipped.' : 'AI database updated.') + '<br><br>';
       reply += `<i>Original question</i>: ${pending.question}<br>`;
-      reply += `<i>Better question</i>: ${betterQuestion ? betterQuestion : 'Not provided'}<br>`;
+      !skipTeaching && (reply += `<i>Better question</i>: ${betterQuestion ? betterQuestion : 'Not provided'}<br>`);
       reply += `<i>Answer</i>: ${answerText}`;
       await updateTextItem(itemId, reply, form.id);
     } catch (err) {
