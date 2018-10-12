@@ -127,18 +127,24 @@ async function processForm(evt) {
       const questions = [pending.question];
       betterQuestion && questions.push(questions);
 
-      if (articleId) {
-        // ArticleID is provided. Add the asked question and optionally a 'better' question to this answer
-
-        await ai.addAlternateQuestions(articleId, questions);
-
-        answerText = await answers.lookup(articleId);
-      } else if (answerText) {
-          // New answer is provided. Add a new answer with the question and optionally a 'better' question
-        await ai.addNewAnswer(questions, answerText, submitterId);
+      if (betterQuestion.toLowerCase() === 'skip') {
+        // For demo purposes skip teaching the bot when 'skip' is entered in
+        // the 'Better question' field.
+        console.log('Skip teaching the bot for demo purposes. Question: ' +  pending.question);
       } else {
-        console.error('Moderator did not specify either an articleId or an answer');
-        return;
+        if (articleId) {
+          // ArticleID is provided. Add the asked question and optionally a 'better' question to this answer
+
+          await ai.addAlternateQuestions(articleId, questions);
+
+          answerText = await answers.lookup(articleId);
+        } else if (answerText) {
+            // New answer is provided. Add a new answer with the question and optionally a 'better' question
+          await ai.addNewAnswer(questions, answerText, submitterId);
+        } else {
+          console.error('Moderator did not specify either an articleId or an answer');
+          return;
+        }
       }
 
       if (!answerText) {
