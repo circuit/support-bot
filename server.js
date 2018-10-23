@@ -6,6 +6,9 @@
 
 'use strict';
 
+console.log(process.env.NODE_ENV)
+console.log(process.env.CLIENT_ID)
+
 const util = require('util');
 const htmlToText = require('html-to-text');
 const EventEmitter = require('events');

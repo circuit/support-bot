@@ -1,5 +1,6 @@
 # config.json
 config-override.json
+app.yaml
 node_modules
 faq-articles.xlsx
 .vscode

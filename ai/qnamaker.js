@@ -72,7 +72,7 @@ function ask(question, prod) {
     console.debug('generateAnswer request', options);
 
     request(options, (error, response, body) => {
-      console.debug('Response for generateAnswer request', response);
+      console.debug('Response for generateAnswer request');
       if (!error && response.statusCode === 200) {
         console.info('Answers:', body.answers);
         resolve(body.answers);
