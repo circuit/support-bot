@@ -11,7 +11,7 @@
   "author": "Roger Urscheler <roger.urscheler@atos.net>",
   "license": "Apache 2.0",
   "dependencies": {
-    "circuit-sdk": "^1.2.3900",
+    "circuit-sdk": "^1.2.6002",
     "deepmerge": "^2.1.0",
     "express": "^4.16.3",
     "html-entities": "^1.2.1",
@@ -19,7 +19,7 @@
     "jsdom": "^11.8.0",
     "json2xls": "^0.1.2",
     "log-timestamp": "^0.1.2",
-    "request": "^2.85.0",
+    "request": "^2.88.0",
     "util": "^0.10.3"
   }
 }
