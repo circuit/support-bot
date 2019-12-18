@@ -90,6 +90,7 @@ function convert(elem) {
   }
 
   let content = elem.innerHTML;
+  content = content.replace(/(<\s*\/?\s*)kbd(\s*([^>]*)?\s*>)/gi ,'$pre$2'); // switch kbd to pre
   content = content.replace(/(<\s*\/?\s*)section(\s*([^>]*)?\s*>)/gi ,'$1div$2'); // switch section to div
   content = content.replace(/(<\s*\/?\s*)abbr(\s*([^>]*)?\s*>)/gi ,'$1span$2'); // switch abbr to span
   content = content.replace(/(<\s*\/?\s*)samp(\s*([^>]*)?\s*>)/gi ,'$1span$2'); // switch samp to span
