@@ -11,15 +11,15 @@
   "author": "Roger Urscheler <roger.urscheler@atos.net>",
   "license": "Apache 2.0",
   "dependencies": {
-    "circuit-sdk": "^1.2.3900",
-    "deepmerge": "^2.1.0",
-    "express": "^4.16.3",
+    "circuit-sdk": "latest",
+    "deepmerge": "^4.0.0",
+    "express": "^4.17.1",
     "html-entities": "^1.2.1",
-    "html-to-text": "^4.0.0",
-    "jsdom": "^11.8.0",
+    "html-to-text": "^5.1.1",
+    "jsdom": "^15.1.1",
     "json2xls": "^0.1.2",
-    "log-timestamp": "^0.1.2",
-    "request": "^2.85.0",
-    "util": "^0.10.3"
+    "log-timestamp": "^0.3.0",
+    "request": "^2.88.0",
+    "util": "^0.12.1"
   }
 }

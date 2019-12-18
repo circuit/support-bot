@@ -23,6 +23,7 @@ require('log-timestamp');
 config.circuit.client_id = process.env.CLIENT_ID || config.circuit.client_id;
 config.circuit.client_secret = process.env.CLIENT_SECRET || config.circuit.client_secret;
 config.circuit.domain = process.env.DOMAIN || config.circuit.domain;
+config.circuit.scope = process.env.SCOPE || config.circuit.scope;
 
 config.qnamaker = config.qnamaker || {};
 config.qnamaker.key = process.env.ENDPOINT_KEY || config.qnamaker.key;
